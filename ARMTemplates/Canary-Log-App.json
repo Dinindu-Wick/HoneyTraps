@@ -8,11 +8,7 @@
             "metadata": {
                 "description": "Provide a custom name for the Logic App if needed."
             }
-       },
-        "connections_azureloganalyticsdatacollector_externalid": {
-            "defaultValue": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/connections/azureloganalyticsdatacollector')]",
-            "type": "string"
-        }
+       }
     },
     "functions": [],
     "variables": {},
@@ -74,7 +70,12 @@
                                 "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureloganalyticsdatacollector')]"
                             }
                         }
-                    }}
+                    },
+                    "connections_azureloganalyticsdatacollector_externalid": {
+                        "defaultValue": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/connections/azureloganalyticsdatacollector')]",
+                        "type": "String"
+                    }
+                }
         }
     }],
     "outputs": {}
