@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": { 
+        "LogicAppName_Canary": {
+            "value": "ThinkstCanaryLogicApp"
+        },
+        "deployment_location": {
+            "value": "Australia Southeast"
+        },
+        "LogicAppNameCustom": {
+            "value": "ThinkstCanaryLogicApp1"
+        }
+    }
+}

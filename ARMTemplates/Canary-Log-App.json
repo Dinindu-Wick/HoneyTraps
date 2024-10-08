@@ -1,0 +1,81 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "LogicAppNameCustom": {
+            "type": "string",
+            "defaultValue": "LogicAppforCanaryTokens",
+            "metadata": {
+                "description": "Provide a custom name for the Logic App if needed."
+            }
+       },
+        "connections_azureloganalyticsdatacollector_externalid": {
+            "defaultValue": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/connections/azureloganalyticsdatacollector')]",
+            "type": "string"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [{
+        "name": "[parameters('LogicAppNameCustom')]",
+        "type": "Microsoft.Logic/workflows",
+        "apiVersion": "2017-07-01",
+        "location": "[resourceGroup().location]",
+        "tags":{
+            "ThinkstCanary": "Canary Token(s)"
+        },
+        "properties": {
+            "state": "Enabled",
+            "definition": {
+                "$schema": "https://schema.management.azure.com/schemas/2016-06-01/Microsoft.Logic.json",
+                "contentVersion": "1.0.0.0",
+                "parameters": {                        
+                    "$connections": {
+                        "defaultValue": {},
+                        "type": "Object"
+                    }
+                },
+                "triggers": {
+                    "HTTP REQUEST": {
+                        "type": "Request",
+                        "kind": "Http",
+                        "inputs": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "actions": {
+                    "Send_Data": {
+                        "runAfter": {},
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "body": "@{triggerBody()}",
+                            "headers": {
+                                "Log-Type": "ThinkstCanaryLogs"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        }
+                    }
+                    },
+                "outputs": {}
+            },
+            "parameters": {
+                "$connections": {
+                        "value": {
+                            "azureloganalyticsdatacollector": {
+                                "connectionId": "[parameters('connections_azureloganalyticsdatacollector_externalid')]",
+                                "connectionName": "azureloganalyticsdatacollector",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureloganalyticsdatacollector')]"
+                            }
+                        }
+                    }}
+        }
+    }],
+    "outputs": {}
+}
